@@ -1,0 +1,12 @@
+# Compiled class files
+*.class
+target/
+build/
+.metadata/
+
+# IDE specific files
+.idea/
+*.iml
+.classpath
+.project
+.settings/

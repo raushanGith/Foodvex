@@ -1,0 +1,43 @@
+package com.tap.controller;
+
+import java.io.IOException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+import com.tap.model.User;
+import com.tap.model.Menu;
+import com.tap.daoimpl.MenuDaoImpl;
+
+@WebServlet("/editMenu")
+public class EditMenuController extends HttpServlet {
+
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		// Security Check
+		HttpSession session = request.getSession();
+		User user = (User) session.getAttribute("loggedInUser");
+		if (user == null || !"Admin".equalsIgnoreCase(user.getRole())) {
+			response.sendRedirect("login.jsp");
+			return;
+		}
+
+		String idStr = request.getParameter("id");
+		if (idStr != null) {
+			int menuId = Integer.parseInt(idStr);
+			MenuDaoImpl menuDao = new MenuDaoImpl();
+			Menu menu = menuDao.getMenu(menuId);
+
+			// Attach the menu item and forward to the edit page
+			request.setAttribute("menu", menu);
+			request.getRequestDispatcher("editMenu.jsp").forward(request, response);
+		} else {
+			response.sendRedirect("manageMenu");
+		}
+	}
+}
